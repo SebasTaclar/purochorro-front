@@ -10,12 +10,17 @@ const messages = {
 			tagline: 'Elegancia y distinción'
 		},
 		nav: {
+			about: 'Quiénes somos',
+			portfolio: 'Portafolio',
+			valueProposition: 'Propuestas de valor',
+			contact: 'Contacto',
+			store: 'Tienda',
 			rings: 'Anillos',
 			necklaces: 'Collares',
 			earings: 'Aretes',
 			bracelets: 'Pulseras',
 			emeralds: 'Esmeraldas',
-				offers: 'Ofertas'
+			offers: 'Ofertas',
 		},
 		auth: {
 			access: 'Acceder',
@@ -58,7 +63,9 @@ const messages = {
 		},
 		whatsapp: {
 			defaultMessage:
-				'Hola! Me interesa conocer más sobre los productos de Joyería Angelie. ¿Me pueden brindar más información?'
+				'Hola, me interesa desarrollar mi marca de helado con ODA GELATO. ¿Me pueden brindar más información?',
+			floatLabel: 'Hablar por WhatsApp',
+			ariaLabel: 'Contactar por WhatsApp',
 		},
 		store: {
 			pickup: {
@@ -221,12 +228,17 @@ const messages = {
 			tagline: 'Elegance and distinction'
 		},
 		nav: {
+			about: 'About us',
+			portfolio: 'Portfolio',
+			valueProposition: 'Value proposition',
+			contact: 'Contact',
+			store: 'Shop',
 			rings: 'Rings',
 			necklaces: 'Necklaces',
 			earings: 'Earrings',
 			bracelets: 'Bracelets',
 			emeralds: 'Emeralds',
-				offers: 'Deals'
+			offers: 'Deals',
 		},
 		auth: {
 			access: 'Sign in',
@@ -268,7 +280,10 @@ const messages = {
 			}
 		},
 		whatsapp: {
-			defaultMessage: 'Hi! I would like to know more about Angelie Jewelry products. Can you share more information?'
+			defaultMessage:
+				'Hi, I am interested in developing my ice cream brand with ODA GELATO. Could you share more information?',
+			floatLabel: 'Chat on WhatsApp',
+			ariaLabel: 'Contact us on WhatsApp',
 		},
 		store: {
 			pickup: {

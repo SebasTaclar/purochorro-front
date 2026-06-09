@@ -109,7 +109,7 @@ const acceptAndGoBack = () => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&display=swap');
+/* Google Fonts import removed */
 
 .terms-page {
   min-height: 100vh;
@@ -171,7 +171,7 @@ const acceptAndGoBack = () => {
 
 .title {
   margin: 0;
-  font-family: 'Playfair Display', 'Georgia', 'Garamond', serif;
+  font-family: var(--ff-display);
   font-size: 2.1rem;
   letter-spacing: 0.2px;
   color: rgba(246, 245, 241, 0.98);
@@ -204,7 +204,7 @@ const acceptAndGoBack = () => {
 .section-title {
   margin: 0 0 0.9rem;
   color: rgb(201, 168, 89);
-  font-family: 'Playfair Display', 'Georgia', 'Garamond', serif;
+  font-family: var(--ff-display);
   font-weight: 800;
   letter-spacing: 0.2px;
   font-size: 1.25rem;

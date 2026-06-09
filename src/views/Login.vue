@@ -95,7 +95,7 @@ const clearCustomValidityMessage = (event: Event) => {
   align-items: center;
   min-height: 100vh;
   width: 100%;
-  padding: 2rem;
+  padding: 7rem;
   background: var(--bg-gradient-primary);
   position: relative;
   transition: all 0.3s ease;
@@ -103,11 +103,11 @@ const clearCustomValidityMessage = (event: Event) => {
 
 /* Estilos específicos para modo oscuro */
 :root[data-theme='dark'] .login-main {
-  background: linear-gradient(135deg, #001122 0%, #002244 50%, #001833 100%);
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-mid) 50%, var(--secondary) 100%);
 }
 
 :root[data-theme='dark'] .login-container {
-  background: rgba(0, 30, 60, 0.95);
+  background: rgba(49, 46, 87, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
@@ -119,7 +119,7 @@ const clearCustomValidityMessage = (event: Event) => {
 
 :root[data-theme='dark'] .form-input:focus {
   border-color: rgba(255, 255, 255, 0.7);
-  background: rgba(0, 40, 80, 0.6);
+  background: rgba(26, 24, 48, 0.6);
   box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
 }
 
@@ -222,14 +222,14 @@ const clearCustomValidityMessage = (event: Event) => {
 }
 
 .form-input:invalid {
-  border-color: rgba(0, 94, 180, 0.6);
-  box-shadow: 0 0 8px rgba(0, 94, 180, 0.2);
+  border-color: rgba(118, 180, 242, 0.6);
+  box-shadow: 0 0 8px rgba(118, 180, 242, 0.2);
 }
 
 .btn-primary {
   width: 100%;
-  background: var(--primary-gradient);
-  color: white;
+  background: var(--primary);
+  color: var(--white);
   border: none;
   border-radius: 12px;
   padding: 16px 24px;
@@ -237,16 +237,16 @@ const clearCustomValidityMessage = (event: Event) => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px var(--primary-color-alpha-30);
+  box-shadow: 0 4px 15px rgba(118, 180, 242, 0.3);
   backdrop-filter: blur(10px);
-  font-family: var(--font-primary);
+  font-family: var(--ff-body);
   margin-top: 1rem;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px var(--primary-color-alpha-40);
-  background: var(--primary-gradient-hover);
+  box-shadow: 0 6px 20px rgba(118, 180, 242, 0.4);
+  background: var(--primary-dark);
 }
 
 .btn-primary:disabled {

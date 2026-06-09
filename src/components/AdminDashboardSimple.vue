@@ -3,7 +3,7 @@
     <div class="dashboard-header">
       <h1 class="dashboard-title">
         <span class="icon">⚙️</span>
-        Panel de Administración - Joyería Angelie
+        Panel de Administración - ODA GELATO
       </h1>
       <p class="dashboard-subtitle">Gestiona productos, categorías y configuraciones</p>
     </div>
@@ -68,7 +68,7 @@
           </button>
         </div>
 
-        <!-- Barra de búsqueda para productos -->
+        <!-- Barra de búsqueda y filtros en una sola fila -->
         <div class="search-bar">
           <div class="search-input-wrapper">
             <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
@@ -83,16 +83,12 @@
             />
             <button v-if="searchProducts" class="search-clear" @click.prevent="searchProducts = ''" aria-label="Limpiar búsqueda">X</button>
           </div>
-        </div>
 
-        <!-- Filtros -->
-        <div class="filters-row">
+          <!-- Filtro de categoría -->
           <div class="filter-group">
-            <label class="filter-label">Categoría</label>
-
             <!-- Desktop: select nativo -->
             <select v-model="selectedCategoryFilter" class="filter-select native-select">
-              <option value="">Todas</option>
+              <option value="">Todas las categorías</option>
               <option v-for="category in categories" :key="category.id" :value="category.id">
                 {{ category.name }}
               </option>
@@ -137,6 +133,13 @@
         <!-- Lista de productos -->
         <div class="products-grid">
           <div v-for="product in filteredProducts" :key="product.id" class="product-card">
+            <span
+              v-if="product.colors && product.colors.length > 0 && product.colors[0]"
+              class="classification-badge"
+              :class="[
+                product.colors[0].toLowerCase() === 'nuevo' ? 'classification-badge--nuevo' : 'classification-badge--novedad'
+              ]"
+            >{{ product.colors[0].toUpperCase() }}</span>
             <div class="product-image">
               <img v-if="product.images && product.images.length > 0" :src="product.images[0]" :alt="product.name" />
               <div v-else class="no-image">📷</div>
@@ -401,7 +404,7 @@
           <form @submit.prevent="saveProduct">
             <div class="form-group">
               <label>Nombre del Producto *</label>
-              <input v-model="productForm.name" type="text" class="form-input" required placeholder="Ej: iPhone 15 Pro" />
+              <input v-model="productForm.name" type="text" class="form-input" required placeholder="Ej: Cono de chocolate" />
             </div>
 
             <div class="form-group">
@@ -420,7 +423,7 @@
                     type="text"
                     class="form-input"
                     required
-                    placeholder="0"
+                    placeholder="1"
                   />
                 </div>
               </div>
@@ -459,27 +462,14 @@
               </div>
             </div>
 
-            <!-- Selector de Material -->
+            <!-- Selector de Clasificación -->
             <div class="form-group">
-              <label>Materiales Disponibles</label>
-              <div class="materials-selector">
-                <div class="materials-grid">
-                  <button
-                    v-for="material in materialOptions"
-                    :key="material"
-                    type="button"
-                    class="material-option"
-                    :class="{ selected: isMaterialSelected(material) }"
-                    @click="toggleProductMaterial(material)"
-                  >
-                    {{ material }}
-                  </button>
-                </div>
-                <div v-if="productForm.colors.length > 0" class="selected-materials">
-                  <span class="selected-label">Seleccionados: </span>
-                  <span class="selected-list">{{ productForm.colors.join(', ') }}</span>
-                </div>
-              </div>
+              <label>Clasificación</label>
+              <select v-model="productForm.colors[0]" class="form-input">
+                <option value="">Seleccionar</option>
+                <option value="Nuevo">Nuevo</option>
+                <option value="Novedad">Novedad</option>
+              </select>
             </div>
 
             <!-- Imágenes (URLs) -->
@@ -792,16 +782,16 @@ const loadPurchases = async () => {
 const productForm = ref({
   name: '',
   description: '',
-  price: 0,
+  price: 1,
   originalPrice: 0,
   images: [''] as string[],
   category: '',
   status: 'available' as 'available' | 'out-of-stock' | 'coming-soon',
-  colors: [] as string[]
+  colors: [''] as string[]
 })
 
-// Materiales disponibles (se guardan en productForm.colors por compatibilidad)
-const materialOptions = ['Esmeralda', 'Oro', 'Plata']
+// Clasificación del producto (se guarda en productForm.colors[0] por compatibilidad)
+const materialOptions = ['Nuevo', 'Novedad']
 
 const categoryForm = ref<CreateCategoryRequest>({
   name: '',
@@ -812,7 +802,7 @@ const categoryForm = ref<CreateCategoryRequest>({
 const tabs = [
   { id: 'products', name: 'Productos', icon: '📦' },
   { id: 'categories', name: 'Categorías', icon: '🏷️' },
-  { id: 'sales', name: 'Resumen de Compras', icon: '📊' }
+  // { id: 'sales', name: 'Resumen de Compras', icon: '📊' }
 ]
 
 // Computed
@@ -888,7 +878,7 @@ const filteredSales = computed(() => {
 // Helper para convertir nombres de colores a hex
 const getColorHex = (colorName: string): string => {
   const colorMap: Record<string, string> = {
-    'esmeralda': '#10b981',
+    'esmeralda': '#76B4F2',
     'naranja cósmico': '#ff5e00',
     'naranja cosmico': '#ff5e00',
     'azul profundo': '#003d5c',
@@ -972,7 +962,7 @@ const editProduct = (product: Product) => {
     images: product.images ? [...product.images] : [],
     category: product.category,
     status: product.status,
-    colors: product.colors ? [...product.colors] : []
+    colors: product.colors ? [...product.colors] : ['']
   }
   if (!productForm.value.images || productForm.value.images.length === 0) {
     productForm.value.images = ['']
@@ -1095,7 +1085,8 @@ const handlePriceInput = (event: Event, field: 'price' | 'originalPrice') => {
 const saveProduct = () => {
   const payload = {
     ...productForm.value,
-    images: productForm.value.images.map(i => i.trim()).filter(Boolean)
+    images: productForm.value.images.map(i => i.trim()).filter(Boolean),
+    colors: productForm.value.colors.map(c => c.trim()).filter(Boolean)
   }
   if (editingProduct.value) {
     // Actualizar producto existente - mostrar confirmación
@@ -1132,12 +1123,12 @@ const closeProductForm = () => {
   productForm.value = {
     name: '',
     description: '',
-    price: 0,
+    price: 1,
     originalPrice: 0,
     images: [''],
     category: '',
     status: 'available',
-    colors: []
+    colors: ['']
   }
 }
 
@@ -1160,33 +1151,33 @@ const closeCategoryForm = () => {
 }
 
 .admin-dashboard {
-  /* Variables locales para look Angelie (oro/tinta) */
-  --admin-ink: #071e25;
-  --admin-gold: rgb(201, 168, 89);
-  --admin-gold-deep: rgb(215, 172, 67);
-  --admin-gold-soft: rgba(201, 168, 89, 0.22);
-  --admin-gold-soft-2: rgba(201, 168, 89, 0.32);
+  /* Variables locales adaptadas a la paleta ODA Gelato */
+  --admin-ink: var(--secondary);
+  --admin-gold: var(--primary);
+  --admin-gold-deep: var(--primary-dark);
+  --admin-gold-soft: rgba(118, 180, 242, 0.22);
+  --admin-gold-soft-2: rgba(118, 180, 242, 0.32);
 
-  /* Acento esmeralda (para no dejar todo dorado) */
-  --admin-emerald: #10b981;
-  --admin-emerald-deep: #059669;
-  --admin-emerald-soft: rgba(16, 185, 129, 0.22);
+  /* Acento esmeralda reemplazado por primary */
+  --admin-emerald: var(--primary);
+  --admin-emerald-deep: var(--primary-dark);
+  --admin-emerald-soft: rgba(118, 180, 242, 0.22);
 
-  /* Override de la “marca” SOLO para el Admin (evita el rojo global SOYDANI) */
+  /* Override de marca SOLO para el Admin */
   --brand-primary: var(--admin-gold);
   --brand-primary-contrast: rgba(255, 255, 255, 0.96);
   --brand-bg-start: var(--admin-ink);
-  --brand-bg-end: #0b2a33;
-  --brand-surface: rgba(7, 30, 37, 0.92);
+  --brand-bg-end: var(--secondary-mid);
+  --brand-surface: rgba(49, 46, 87, 0.92);
   --brand-border: var(--admin-gold-soft);
   --brand-accent: var(--admin-gold);
-  --brand-accent-alt: rgba(215, 172, 67, 0.95);
-  --brand-accent-glow: rgba(201, 168, 89, 0.35);
-  --brand-success: var(--admin-emerald);
+  --brand-accent-alt: var(--primary-pale);
+  --brand-accent-glow: rgba(118, 180, 242, 0.35);
+  --brand-success: #76B4F2;
   --brand-gradient: linear-gradient(135deg, var(--brand-bg-start) 0%, var(--brand-bg-end) 100%);
   --brand-accent-gradient: linear-gradient(135deg, var(--admin-gold) 0%, var(--admin-gold-deep) 100%);
 
-  /* Variables usadas por modales genéricos (p.ej. ConfirmationModal) */
+  /* Variables usadas por modales genéricos */
   --overlay-bg: rgba(0, 0, 0, 0.78);
   --backdrop-blur: blur(8px);
   --bg-secondary: var(--brand-surface);
@@ -1194,7 +1185,7 @@ const closeCategoryForm = () => {
   --text-primary: rgba(255, 255, 255, 0.96);
   --text-secondary: rgba(255, 255, 255, 0.82);
   --border-primary: var(--brand-border);
-  --border-secondary: rgba(201, 168, 89, 0.32);
+  --border-secondary: rgba(118, 180, 242, 0.32);
   --shadow-primary: rgba(0, 0, 0, 0.55);
   --shadow-secondary: rgba(0, 0, 0, 0.35);
 
@@ -1320,7 +1311,7 @@ const closeCategoryForm = () => {
 .tab.active {
   background: var(--brand-success);
   color: var(--brand-primary-contrast);
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.5);
+  box-shadow: 0 2px 8px rgba(118, 180, 242, 0.5);
 }
 
 .tab:hover:not(.active) {
@@ -1331,7 +1322,7 @@ const closeCategoryForm = () => {
 .content-section {
   background: var(--brand-surface);
   border-radius: 20px;
-  padding: 3px;
+  padding: 13px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   border: 1px solid var(--brand-border);
   max-width: 100%;
@@ -1354,18 +1345,22 @@ const closeCategoryForm = () => {
   margin: 0;
 }
 
-/* Barras de búsqueda en Admin */
+/* Barras de búsqueda y filtros en una sola fila */
 .search-bar {
   display: flex;
   justify-content: center;
+  align-items: flex-end;
+  gap: 1rem;
   margin: 0 0 2rem;
   position: relative;
+  flex-wrap: wrap;
 }
 
 .search-input-wrapper {
   position: relative;
-  width: 100%;
+  flex: 1 1 300px;
   max-width: 600px;
+  min-width: 0;
 }
 
 .search-icon {
@@ -1394,7 +1389,7 @@ const closeCategoryForm = () => {
 .search-input:focus {
   background: var(--brand-surface);
   border-color: var(--brand-success);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 3px rgba(118, 180, 242, 0.2);
 }
 
 .search-input:hover {
@@ -1411,7 +1406,7 @@ const closeCategoryForm = () => {
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(118, 180, 242, 0.1);
   border: none;
   cursor: pointer;
   font-size: 0.9rem;
@@ -1427,7 +1422,7 @@ const closeCategoryForm = () => {
 }
 
 .search-clear:hover {
-  background: rgba(16, 185, 129, 0.2);
+  background: rgba(118, 180, 242, 0.2);
   transform: translateY(-50%) scale(1.05);
 }
 
@@ -1439,11 +1434,14 @@ const closeCategoryForm = () => {
 
 /* En celular: 2 productos por fila */
 @media (max-width: 640px) {
-  .filters-row {
-    padding: 0 6px;
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
   }
 
+  .search-input-wrapper,
   .filter-group {
+    flex: 1 1 auto;
     max-width: none;
   }
 
@@ -1464,6 +1462,7 @@ const closeCategoryForm = () => {
 }
 
 .product-card {
+  position: relative;
   background: var(--brand-bg-end);
   border-radius: 16px;
   padding: 20px;
@@ -1473,8 +1472,33 @@ const closeCategoryForm = () => {
 
 .product-card:hover {
   border-color: var(--brand-success);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 25px rgba(118, 180, 242, 0.3);
   transform: translateY(-2px);
+}
+
+.classification-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  font-family: var(--ff-display);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.classification-badge--nuevo {
+  background: var(--accent);
+  color: white;
+}
+
+.classification-badge--novedad {
+  background: var(--primary);
+  color: var(--secondary);
 }
 
 .product-image {
@@ -1519,6 +1543,11 @@ const closeCategoryForm = () => {
   font-size: 0.9rem;
   margin: 0 0 15px;
   line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .product-meta {
@@ -1531,7 +1560,7 @@ const closeCategoryForm = () => {
 .price {
   font-size: 1.3rem;
   font-weight: 700;
-  color: rgba(215, 172, 67, 0.95);
+  color: rgba(74, 142, 216, 0.95);
 }
 
 .status {
@@ -1542,15 +1571,15 @@ const closeCategoryForm = () => {
 }
 
 .status.available {
-  background: rgba(16, 185, 129, 0.15);
+  background: rgba(16, 185, 129, 0.18);
   color: #34d399;
   border: 1px solid rgba(16, 185, 129, 0.35);
 }
 
 .status.out-of-stock {
-  background: rgba(239, 68, 68, 0.15);
-  color: #fecaca;
-  border: 1px solid rgba(239, 68, 68, 0.35);
+  background: rgba(208, 79, 109, 0.15);
+  color: #F9D5DD;
+  border: 1px solid rgba(208, 79, 109, 0.35);
 }
 
 .status.coming-soon {
@@ -1560,33 +1589,41 @@ const closeCategoryForm = () => {
 }
 
 /* Botones de acciones (Editar/Eliminar) */
-.btn-edit:hover {
-  background: rgba(16, 185, 129, 0.18);
-  border-color: rgba(16, 185, 129, 0.35);
-  color: #ecfdf5;
+.product-actions .btn-edit,
+.product-actions .btn-edit.btn-secondary {
+  background: var(--primary) !important;
+  color: var(--secondary) !important;
+  border: 1px solid var(--primary) !important;
 }
 
-.btn-delete:hover {
-  background: rgba(239, 68, 68, 0.18);
-  border-color: rgba(239, 68, 68, 0.35);
-  color: #fff;
+.product-actions .btn-edit:hover,
+.product-actions .btn-edit.btn-secondary:hover {
+  background: var(--primary-dark) !important;
+  border-color: var(--primary-dark) !important;
+  color: var(--white) !important;
+}
+
+.product-actions .btn-delete,
+.product-actions .btn-delete.btn-danger {
+  background: var(--accent) !important;
+  color: var(--white) !important;
+  border: 1px solid var(--accent) !important;
+}
+
+.product-actions .btn-delete:hover,
+.product-actions .btn-delete.btn-danger:hover {
+  background: var(--accent-dark) !important;
+  border-color: var(--accent-dark) !important;
+  color: var(--white) !important;
 }
 
 /* Filtros */
-.filters-row {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 0 1.5rem;
-}
-
 .filter-group {
-  width: 100%;
-  max-width: 600px;
+  flex: 0 0 220px;
   display: grid;
   grid-template-columns: 1fr;
   gap: 8px;
+  min-width: 0;
 }
 
 .filter-label {
@@ -1672,8 +1709,8 @@ const closeCategoryForm = () => {
 }
 
 .filter-dropdown-item.active {
-  background: rgba(16, 185, 129, 0.18);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: rgba(118, 180, 242, 0.18);
+  border: 1px solid rgba(118, 180, 242, 0.25);
 }
 
 /* Móvil: esconder select nativo y usar dropdown controlado */
@@ -1689,7 +1726,7 @@ const closeCategoryForm = () => {
 
 .filter-select:focus {
   border-color: var(--brand-success);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 3px rgba(118, 180, 242, 0.2);
 }
 
 .product-actions {
@@ -1843,27 +1880,27 @@ const closeCategoryForm = () => {
 
 .material-option:hover {
   border-color: var(--admin-emerald);
-  background: rgba(16, 185, 129, 0.12);
+  background: rgba(118, 180, 242, 0.12);
   transform: translateY(-1px);
 }
 
 .material-option.selected {
   border-color: var(--admin-emerald);
-  background: rgba(16, 185, 129, 0.18);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+  background: rgba(118, 180, 242, 0.18);
+  box-shadow: 0 0 0 3px rgba(118, 180, 242, 0.18);
 }
 
 .selected-materials {
   padding: 10px 12px;
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.22);
+  background: rgba(118, 180, 242, 0.08);
+  border: 1px solid rgba(118, 180, 242, 0.22);
   border-radius: 8px;
   margin-top: 10px;
 }
 
 .selected-label {
   font-weight: 600;
-  color: rgba(215, 172, 67, 0.95);
+  color: rgba(74, 142, 216, 0.95);
   font-size: 0.85rem;
 }
 
@@ -1903,13 +1940,13 @@ const closeCategoryForm = () => {
 .btn.btn-primary {
   background: var(--brand-accent-gradient);
   color: var(--admin-ink);
-  box-shadow: 0 10px 30px rgba(201, 168, 89, 0.28);
+  box-shadow: 0 10px 30px rgba(118, 180, 242, 0.28);
 }
 
 .btn.btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 18px 46px rgba(201, 168, 89, 0.32);
-  background: linear-gradient(135deg, rgba(215, 172, 67, 1) 0%, rgba(201, 168, 89, 1) 100%);
+  box-shadow: 0 18px 46px rgba(118, 180, 242, 0.32);
+  background: linear-gradient(135deg, rgba(74, 142, 216, 1) 0%, rgba(118, 180, 242, 1) 100%);
 }
 
 .btn-secondary {
@@ -1922,37 +1959,25 @@ const closeCategoryForm = () => {
 }
 
 .btn-danger {
-  background: rgba(201, 168, 89, 0.14);
+  background: rgba(118, 180, 242, 0.14);
   color: var(--admin-gold);
   border: 1px solid var(--admin-gold-soft);
 }
 
 .btn-danger:hover {
-  background: rgba(201, 168, 89, 0.22);
+  background: rgba(118, 180, 242, 0.22);
 }
 
-/* Hover específico para acciones de producto (Editar/Eliminar) */
-.product-actions .btn.btn-secondary:hover {
-  background: rgba(16, 185, 129, 0.14);
-  border-color: rgba(16, 185, 129, 0.35);
-  color: var(--brand-success);
-}
-
-.product-actions .btn.btn-danger:hover {
-  background: rgba(239, 68, 68, 0.14);
-  border-color: rgba(239, 68, 68, 0.35);
-  color: var(--brand-danger);
-}
-
+/* Hover específico para acciones de categoría */
 .category-actions .btn.btn-secondary:hover {
-  background: rgba(16, 185, 129, 0.14);
-  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(118, 180, 242, 0.14);
+  border-color: rgba(118, 180, 242, 0.35);
   color: var(--brand-success);
 }
 
 .category-actions .btn.btn-danger:hover {
-  background: rgba(239, 68, 68, 0.14);
-  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(208, 79, 109, 0.14);
+  border-color: rgba(208, 79, 109, 0.35);
   color: var(--brand-danger);
 }
 
@@ -2059,7 +2084,7 @@ const closeCategoryForm = () => {
 .form-input:focus {
   outline: none;
   border-color: var(--brand-success);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 0 3px rgba(118, 180, 242, 0.2);
 }
 
 .form-input::placeholder {
@@ -2109,7 +2134,7 @@ const closeCategoryForm = () => {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgba(201, 168, 89, 0.9);
+  background: rgba(118, 180, 242, 0.9);
   color: white;
   border: none;
   border-radius: 50%;
@@ -2124,7 +2149,7 @@ const closeCategoryForm = () => {
 }
 
 .remove-image:hover {
-  background: rgba(215, 172, 67, 1);
+  background: rgba(74, 142, 216, 1);
 }
 
 /* Estilos para vista previa de múltiples imágenes */
@@ -2157,7 +2182,7 @@ const closeCategoryForm = () => {
   position: absolute;
   top: 5px;
   right: 5px;
-  background: rgba(201, 168, 89, 0.9);
+  background: rgba(118, 180, 242, 0.9);
   color: white;
   border: none;
   border-radius: 50%;
@@ -2172,7 +2197,7 @@ const closeCategoryForm = () => {
 }
 
 .remove-single-image:hover {
-  background: rgba(215, 172, 67, 1);
+  background: rgba(74, 142, 216, 1);
 }
 
 .image-index {
@@ -2227,7 +2252,7 @@ const closeCategoryForm = () => {
 }
 
 .img-action-btn.primary:hover {
-  background: #059669;
+  background: #4A8ED8;
 }
 
 .drop-zone {
@@ -2242,12 +2267,12 @@ const closeCategoryForm = () => {
 
 .drop-zone.dragover {
   border-color: var(--brand-success);
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(118, 180, 242, 0.1);
 }
 
 .drop-zone:hover {
   border-color: var(--brand-success);
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(118, 180, 242, 0.1);
 }
 
 .drop-content {
@@ -2272,7 +2297,7 @@ const closeCategoryForm = () => {
 }
 
 .upload-btn:hover {
-  color: #059669;
+  color: #4A8ED8;
 }
 
 .url-input {
@@ -2288,8 +2313,8 @@ const closeCategoryForm = () => {
 }
 
 .discount-info {
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(118, 180, 242, 0.1);
+  border: 1px solid rgba(118, 180, 242, 0.3);
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 20px;
@@ -2301,8 +2326,8 @@ const closeCategoryForm = () => {
   gap: 8px;
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(16, 185, 129, 0.18);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(118, 180, 242, 0.18);
+  border: 1px solid rgba(118, 180, 242, 0.3);
   color: rgba(255, 255, 255, 0.96);
   font-weight: 700;
   font-size: 0.9rem;
@@ -2544,9 +2569,9 @@ const closeCategoryForm = () => {
 }
 
 .status-badge.cancelled {
-  background: rgba(201, 168, 89, 0.14);
-  color: rgba(201, 168, 89, 0.98);
-  border: 1px solid rgba(201, 168, 89, 0.22);
+  background: rgba(118, 180, 242, 0.14);
+  color: rgba(118, 180, 242, 0.98);
+  border: 1px solid rgba(118, 180, 242, 0.22);
 }
 
 .date {
@@ -2893,8 +2918,8 @@ const closeCategoryForm = () => {
 }
 
 .showcase-status.unavailable {
-  background: rgba(201, 168, 89, 0.14);
-  color: rgba(201, 168, 89, 0.98);
+  background: rgba(118, 180, 242, 0.14);
+  color: rgba(118, 180, 242, 0.98);
   border: 1px solid var(--admin-gold-soft);
 }
 
@@ -2969,7 +2994,7 @@ const closeCategoryForm = () => {
 
 .file-upload-area:hover {
   border-color: var(--brand-success);
-  background: rgba(16, 185, 129, 0.05);
+  background: rgba(118, 180, 242, 0.05);
 }
 
 .upload-placeholder {
@@ -3008,7 +3033,7 @@ const closeCategoryForm = () => {
   position: absolute;
   top: -8px;
   right: -8px;
-  background: rgba(201, 168, 89, 0.9);
+  background: rgba(118, 180, 242, 0.9);
   color: white;
   border: none;
   border-radius: 50%;
@@ -3020,7 +3045,7 @@ const closeCategoryForm = () => {
 }
 
 .remove-image:hover {
-  background: rgba(215, 172, 67, 1);
+  background: rgba(74, 142, 216, 1);
   transform: scale(1.1);
 }
 

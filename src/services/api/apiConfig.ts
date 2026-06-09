@@ -2,7 +2,7 @@
 export const API_CONFIG = {
   baseURL: import.meta.env.DEV
     ? 'http://localhost:7071/api/v1'
-    : 'https://angelie-back-bafqgcdfcub7arbv.centralus-01.azurewebsites.net/api/v1',
+    : 'https://gelato-back-ceh2gdccfge3hdf8.centralus-01.azurewebsites.net/api/v1',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

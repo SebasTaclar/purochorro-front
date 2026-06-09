@@ -11,6 +11,6 @@ import AdminDashboardSimple from '@/components/AdminDashboardSimple.vue'
 <style scoped>
 .admin-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #071e25 0%, #0b2a33 100%);
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-mid) 100%);
 }
 </style>

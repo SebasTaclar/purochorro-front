@@ -192,7 +192,7 @@ onUnmounted(() => {
   padding: 4rem 2rem 2rem 2rem; /* Más padding arriba */
   position: relative;
   overflow: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* Elementos decorativos */

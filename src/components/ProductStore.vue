@@ -1,13 +1,20 @@
 <template>
-  <section class="product-store">
+  <section class="product-store" id="portafolio">
     <div class="container">
       <!-- Header de la sección -->
       <div class="store-header">
-        <h2 class="store-title">
-          Nuestra Joyería
-        </h2>
+        <div class="store-header__left">
+          <div class="store-eyebrow">
+            <div class="store-eyebrow-line"></div>
+            <span>Portafolio de Productos</span>
+          </div>
+          <h2 class="store-title">
+            Cada formato.<br>
+            <span class="store-title--blue">Tu marca.</span>
+          </h2>
+        </div>
         <p class="store-subtitle">
-          Piezas que elevan tu estilo: anillos, aretes, collares y pulseras.
+          Producimos todos los formatos de helado industrial que tu marca necesita, con las presentaciones que el mercado demanda.
         </p>
       </div>
 
@@ -30,157 +37,108 @@
         </div>
       </div>
 
-      <!-- Filtros de categoría (como antes) -->
+      <!-- Filtros de categoría -->
       <div class="category-filters">
         <button
           v-for="category in categoryOptions"
           :key="category"
           @click="selectedCategory = category"
-          :class="['filter-btn', { active: selectedCategory === category }]"
+          :class="['filter-pill', { active: selectedCategory === category }]"
         >
-          {{ category }}
+          {{ category.toUpperCase() }}
         </button>
       </div>
 
-      <!-- Productos por categoría (4 visibles + carrusel horizontal) -->
-      <div v-for="section in categorySections" :key="section.slug" class="store-category">
-        <div class="store-category-header">
-          <button
-            type="button"
-            class="store-nav-header store-nav-header-left"
-            aria-label="Mover a la izquierda"
-            @click="scrollCategory(section.slug, -1)"
-          >
-            ‹
-          </button>
-
-          <div class="store-category-title-wrap">
-            <h3 class="store-category-title">{{ section.title.toUpperCase() }}</h3>
-            <button
-              type="button"
-              class="store-view-all"
-              @click="goToCategory(section.slug)"
-            >
-              VER TODOS
-            </button>
+      <!-- Productos grid -->
+      <div class="products-grid">
+        <div
+          v-for="section in categorySections"
+          :key="section.slug"
+          class="section-wrapper"
+        >
+          <div class="section-header-mobile" v-if="section.title">
+            <span class="section-title-mobile">{{ section.title }}</span>
           </div>
-
           <button
             type="button"
-            class="store-nav-header store-nav-header-right"
-            aria-label="Mover a la derecha"
-            @click="scrollCategory(section.slug, 1)"
-          >
-            ›
-          </button>
-        </div>
-
-        <div class="store-carousel-wrapper">
-          <button
-            type="button"
-            class="store-nav store-nav-left"
-            aria-label="Mover a la izquierda"
+            class="carousel-arrow carousel-arrow--left"
             @click="scrollCategory(section.slug, -1)"
+            aria-label="Anterior"
           >
-            ‹
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
-
-          <div class="store-carousel" :ref="(el) => setCarouselRef(section.slug, el)">
+          <div
+            class="grid-section"
+            :ref="(el) => setCarouselRef(section.slug, el)"
+          >
             <div
               v-for="product in section.products"
               :key="product.id"
-              class="product-card"
+              class="ice-card"
               @click="openProductModal(product)"
             >
-            <!-- Categoría encima de la imagen -->
-            <span class="product-category-top">{{ categoryNameById(product.category) }}</span>
+            <!-- Badge de clasificación -->
+            <span
+              v-if="product.colors && product.colors.length > 0 && product.colors[0]"
+              class="ice-badge"
+              :class="[
+                product.colors[0].toLowerCase() === 'nuevo' ? 'ice-badge--nuevo' : 'ice-badge--novedad'
+              ]"
+            >{{ product.colors[0].toUpperCase() }}</span>
 
-            <!-- Imagen del producto -->
-            <div class="product-image">
-              <img :src="product.images[0]" :alt="product.name" loading="lazy" decoding="async" />
-              <div v-if="product.originalPrice" class="discount-badge">
-                -{{ Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) }}%
-              </div>
-              <div v-if="product.status !== 'available'" class="out-of-stock-overlay">
-                <span>{{ getStatusText(product.status) }}</span>
-              </div>
-              <!-- Estado del producto en esquina inferior izquierda -->
-              <span :class="['product-status-image', getStatusClass(product.status)]">
-                {{ getStatusText(product.status) }}
-              </span>
-            </div>
 
-            <!-- Información del producto -->
-            <div class="product-info">
-              <h3 class="product-name">{{ product.name }}</h3>
-              <div class="product-description">
-                <p class="truncated">
-                  {{ product.description }}
-                </p>
-                <button
-                  v-if="shouldShowReadMore(product.description)"
-                  @click.stop="openProductModal(product)"
-                  class="read-more-btn"
-                >
-                  Ver más
-                </button>
-              </div>
 
-              <!-- Precios -->
-              <div class="price-section">
-                <div class="price-wrapper">
-                  <span class="current-price">${{ product.price.toLocaleString() }} COP</span>
-                  <span v-if="product.originalPrice" class="original-price">
-                    ${{ product.originalPrice.toLocaleString() }} COP
-                  </span>
-                  <span v-if="product.originalPrice && product.originalPrice > product.price" class="discount-badge">
-                    -{{ Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) }}%
-                  </span>
-                </div>
-              </div>
-
-              <!-- Botón de agregar al carrito -->
-              <button
-                v-if="product.status === 'available'"
-                @click.stop="addToCartFromCard($event, product)"
-                class="add-to-cart-btn"
-                :disabled="product.status !== 'available'"
-              >
-                <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="9" cy="21" r="1"/>
-                  <circle cx="20" cy="21" r="1"/>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            <!-- Imagen / Icono área -->
+            <div class="ice-visual">
+              <img
+                v-if="product.images && product.images[0]"
+                :src="product.images[0]"
+                :alt="product.name"
+                loading="lazy"
+                decoding="async"
+              />
+              <div v-else class="ice-icon-fallback">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="4" y="4" width="16" height="16" rx="4"/>
                 </svg>
-                <span>Agregar</span>
-              </button>
+              </div>
             </div>
+
+            <!-- Footer info -->
+            <div class="ice-footer">
+              <div class="ice-meta">
+                <span class="ice-category">{{ categoryNameById(product.category).toUpperCase() }}</span>
+                <span
+                  class="ice-status"
+                  :class="product.status === 'available' ? 'ice-status--available' : 'ice-status--coming-soon'"
+                >
+                  {{ product.status === 'available' ? 'Disponible' : 'Próximamente' }}
+                </span>
+              </div>
+              <h3 class="ice-name">{{ product.name }}</h3>
+              <p class="ice-desc truncated">{{ product.description }}</p>
             </div>
           </div>
-
           <button
             type="button"
-            class="store-nav store-nav-right"
-            aria-label="Mover a la derecha"
+            class="carousel-arrow carousel-arrow--right"
             @click="scrollCategory(section.slug, 1)"
+            aria-label="Siguiente"
           >
-            ›
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
           </button>
         </div>
       </div>
-
+    </div>
     </div>
   </section>
 </template>
 
 <style scoped>
+
 .product-store {
   padding: 3rem 0;
-  background: linear-gradient(180deg, rgba(250, 246, 238, 0.96) 0%, rgba(246, 241, 232, 0.92) 100%);
-  position: relative;
-}
-.product-store {
-  padding: 3rem 0;
-  background: linear-gradient(180deg, rgba(250, 246, 238, 0.96) 0%, rgba(246, 241, 232, 0.92) 100%);
+  background: white;
   position: relative;
 }
 
@@ -538,7 +496,7 @@ const { addToCart } = useCart()
 
 // Usar el composable de productos
 const {
-  availableProducts,
+  regularProducts,
   categories,
   getCategoryById,
   loadProducts,
@@ -548,27 +506,29 @@ const {
 // Cargar productos y categorías al montar el componente
 onMounted(async () => {
   console.log('🏪 [ProductStore] onMounted - Iniciando carga...')
-  console.log('🏪 [ProductStore] availableProducts ANTES de cargar:', availableProducts.value.length)
+  console.log('🏪 [ProductStore] regularProducts ANTES de cargar:', regularProducts.value.length)
 
   await loadCategories()
   console.log('🏪 [ProductStore] Categorías cargadas:', categories.value.length)
 
   await loadProducts()
   console.log('🏪 [ProductStore] loadProducts ejecutado')
-  console.log('🏪 [ProductStore] availableProducts DESPUÉS de cargar:', availableProducts.value.length)
-  console.log('🏪 [ProductStore] availableProducts:', availableProducts.value)
+  console.log('🏪 [ProductStore] regularProducts DESPUÉS de cargar:', regularProducts.value.length)
+  console.log('🏪 [ProductStore] regularProducts:', regularProducts.value)
 })
 
 // Watcher para debug: observar cambios en productos
-watch(availableProducts, (newProducts) => {
-  console.log('🔔 [ProductStore Watch] availableProducts cambiaron:', newProducts.length, newProducts)
+watch(regularProducts, (newProducts) => {
+  console.log('🔔 [ProductStore Watch] regularProducts cambiaron:', newProducts.length, newProducts)
 }, { immediate: true })
 
 // Término de búsqueda libre
 const searchTerm = ref('')
 
-// Productos y categorías desde el composable
-const products = computed(() => availableProducts.value)
+// Productos visibles en tienda: disponibles + próximamente
+const products = computed(() =>
+  regularProducts.value.filter(p => p.status === 'available' || p.status === 'coming-soon')
+)
 
 // Función para determinar si la descripción es lo suficientemente larga (más de 2 líneas aprox 60 caracteres)
 const shouldShowReadMore = (description: string) => {
@@ -722,18 +682,18 @@ function goToCategory(slug: string) {
 // Función para agregar al carrito desde la tarjeta
 const addToCartFromCard = (event: Event, product: ProductType) => {
   event.stopPropagation() // Evitar que se abra el modal
-  
+
   if (product.status !== 'available') {
     return
   }
-  
+
   // Construir características del producto
   const characteristics: string[] = []
   if (product.colors && product.colors.length > 0) {
     // Agregar todos los colores disponibles
     characteristics.push(...product.colors)
   }
-  
+
   addToCart({
     id: product.id,
     name: product.name,
@@ -751,7 +711,7 @@ const addToCartFromCard = (event: Event, product: ProductType) => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&display=swap');
+/* Google Fonts import removed */
 
 .product-store {
   /* Variables locales para look joyería (reutiliza paleta ya usada en el proyecto) */
@@ -765,52 +725,100 @@ const addToCartFromCard = (event: Event, product: ProductType) => {
   --brand-success: var(--store-gold);
   --brand-accent-alt: var(--store-gold-deep);
 
-  padding: 4rem 0;
+  padding: 80px 48px;
   /* Fondo ligeramente distinto al de “Nuestras Categorías” (misma familia, tono un poco más profundo) */
-  background: linear-gradient(180deg, rgba(250, 246, 238, 0.96) 0%, rgba(246, 241, 232, 0.92) 100%);
   position: relative;
   /* Importante: en modo oscuro el texto global es blanco. Aquí forzamos tinta oscura porque el fondo es claro. */
   color: rgba(7, 30, 37, 0.92);
+  padding:100px 48px;position:relative
 }
 
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem;
+
 }
 
 /* Header */
 .store-header {
-  text-align: center;
-  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: end;
+  margin-bottom: 2.5rem;
 }
-
+.store-header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.store-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--ff-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+}
+.store-eyebrow-line {
+  width: 24px;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px;
+}
 .store-title {
-  font-size: 3rem;
+  font-family: var(--ff-display);
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 800;
-  margin-bottom: 1rem;
-  color: var(--brand-primary);
-  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  font-family: 'Playfair Display', 'Georgia', 'Garamond', serif;
-  letter-spacing: 0.5px;
+  letter-spacing: -0.04em;
+  color: var(--secondary);
+  line-height: 1.05;
+  margin: 0;
 }
-
-.store-title .highlight {
-  color: var(--brand-success);
-  text-shadow: 0 0 20px var(--store-gold-glow);
+.store-title--blue {
+  color: var(--primary);
 }
-
 .store-subtitle {
-  font-size: 1.2rem;
-  color: rgba(7, 30, 37, 0.72);
-  max-width: 600px;
-  margin: 0 auto;
+  font-size: 0.92rem;
+  color: var(--gray);
+  line-height: 1.7;
+  max-width: 320px;
+  margin: 0 0 0 auto;
+  padding-bottom: 4px;
 }
 
-.store-nav,
-.store-view-all,
-.store-category-title {
-  color: rgba(7, 30, 37, 0.92);
+@media (max-width: 768px) {
+  .store-header {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .store-header__left {
+    align-items: flex-start;
+  }
+  .store-title {
+    text-align: left;
+  }
+  .store-subtitle {
+    margin: 0;
+    max-width: 100%;
+    text-align: left;
+  }
+  .search-bar {
+    justify-content: center;
+  }
+  .category-filters {
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .filter-pill {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.65rem;
+  }
 }
 
 /* Barra de búsqueda */
@@ -899,187 +907,225 @@ const addToCartFromCard = (event: Event, product: ProductType) => {
 /* Filtros */
 .category-filters {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 3rem;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
   flex-wrap: wrap;
 }
 
-/* Carrusel por categoría (layout). No toca estilos de las cards existentes. */
-.store-category {
-  margin-bottom: 2.25rem;
+.filter-pill {
+  appearance: none;
+  background: transparent;
+  border: 1.5px solid var(--gray-light);
+  border-radius: 100px;
+  padding: 0.6rem 1.25rem;
+  font-family: var(--ff-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.filter-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.filter-pill.active {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  color: var(--white);
 }
 
-.store-category-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin: 0.75rem 0 1rem;
+/* Grid de productos */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+.grid-section {
+  display: contents;
 }
 
-.store-carousel-wrapper {
+/* Tarjeta tipo helado */
+.ice-card {
   position: relative;
-  padding: 0 3rem;
-}
-
-.store-category-title-wrap {
+  background: #e8f0fe;
+  border-radius: var(--r-xl);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.store-category-title {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 800;
-}
-
-.store-view-all {
-  appearance: none;
-  background: transparent;
-  border: none;
-  padding: 0;
-  font: inherit;
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  text-decoration: underline;
   cursor: pointer;
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s;
+  border: 1px solid rgba(118, 180, 242, 0.12);
+}
+.ice-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(26, 24, 48, 0.1);
 }
 
-.store-nav {
-  appearance: none;
-  background: white;
-  border: 2px solid var(--brand-success);
-  padding: 0.5rem 0.8rem;
-  font-size: 1.8rem;
-  line-height: 1;
-  cursor: pointer;
+.ice-badge {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  color: var(--brand-success);
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  font-family: var(--ff-body);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+.ice-badge--new {
+  top: 36px;
+  background: var(--accent);
+  color: var(--white);
+}
+.ice-badge--sale {
+  top: 36px;
+  background: var(--primary);
+  color: var(--white);
+}
+.ice-badge--nuevo {
+  top: 14px;
+  right: 14px;
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 12px rgba(208, 79, 109, 0.4);
+}
+
+.ice-badge--novedad {
+  top: 14px;
+  right: 14px;
+  background: var(--primary);
+  color: var(--secondary);
+  box-shadow: 0 4px 12px rgba(118, 180, 242, 0.4);
+}
+
+.ice-visual {
+  flex: 1;
+  min-height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px 3px;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+}
+.ice-visual img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.3s ease;
+  border-radius: var(--r);
+}
+.ice-card:hover .ice-visual img {
+  transform: scale(1.05);
+}
+.ice-icon-fallback {
+  width: 48px;
+  height: 48px;
+  color: var(--primary);
+  opacity: 0.35;
+}
+.ice-icon-fallback svg {
+  width: 100%;
+  height: 100%;
 }
 
-.store-nav:hover {
-  background: var(--brand-success);
-  color: white;
-  transform: translateY(-50%) scale(1.15);
-  box-shadow: 0 6px 20px rgba(201, 168, 89, 0.4);
+.ice-footer {
+  background: var(--gray-bg);
+  padding: 16px 18px 18px;
+  border-top: 1px solid rgba(118, 180, 242, 0.08);
 }
-
-.store-nav-left {
-  left: 0;
-}
-
-.store-nav-right {
-  right: 0;
-}
-
-.store-nav-header {
-  appearance: none;
-  background: transparent;
-  border: none;
-  padding: 0.25rem 0.4rem;
-  font-size: 1.8rem;
-  line-height: 1;
-  cursor: pointer;
-  color: rgba(7, 30, 37, 0.92);
-  transition: all 0.3s ease;
-}
-
-.store-nav-header:hover {
-  color: var(--brand-success);
-  transform: scale(1.2);
-}
-
-.store-carousel {
+.ice-meta {
   display: flex;
-  gap: 1.1rem;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding: 0.5rem;
-  padding-bottom: 0.5rem;
-  /* Ocultar scrollbar */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
 }
 
-/* Ocultar scrollbar en Chrome/Safari */
-.store-carousel::-webkit-scrollbar {
-  display: none;
+.ice-category {
+  font-family: var(--ff-body);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary);
 }
 
-.store-carousel > .product-card {
-  flex: 0 0 calc((100% - 3.3rem) / 4);
-  scroll-snap-align: start;
+.ice-status {
+  font-family: var(--ff-body);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+
+.ice-status--available {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+}
+
+.ice-status--coming-soon {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+}
+.ice-name {
+  font-family: var(--ff-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--secondary);
+  margin: 0 0 6px;
+  line-height: 1.25;
+}
+.ice-desc {
+  font-size: 0.72rem;
+  color: var(--gray);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 @media (max-width: 1100px) {
-  .store-carousel > .product-card {
-    flex-basis: calc((100% - 2.2rem) / 3);
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
-
 @media (max-width: 820px) {
-  .store-carousel > .product-card {
-    flex-basis: calc((100% - 1.1rem) / 2);
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
-
 @media (max-width: 520px) {
-  .store-carousel-wrapper {
-    padding: 0;
+  .products-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.875rem;
   }
-
-  .store-nav {
-    display: none;
+  .ice-visual {
+    min-height: 140px;
+    padding: 16px;
   }
-
-  .store-nav-header {
-    font-size: 1.6rem;
+  .ice-footer {
+    padding: 12px 14px 14px;
   }
-
-  .store-carousel {
-    /* Un poco más de ancho útil para cada card */
-    gap: 0.75rem;
-    scroll-padding: 0.5rem;
-    padding: 0 0 0.5rem;
+  .ice-name {
+    font-size: 0.78rem;
   }
-
-  .store-carousel > .product-card {
-    /* En celular: que se vean 2 cards a la vez */
-    flex-basis: calc((100% - 1.65rem) / 2);
+  .ice-desc {
+    font-size: 0.68rem;
   }
-}
-
-.filter-btn {
-  padding: 0.75rem 1.5rem;
-  border: 2px solid rgba(201, 168, 89, 0.22);
-  background: white;
-  border-radius: 25px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.filter-btn:hover,
-.filter-btn.active {
-  border-color: rgba(201, 168, 89, 0.5);
-  background: rgba(7, 30, 37, 0.96);
-  color: var(--brand-success);
-  transform: translateY(-2px);
 }
 
 /* Grid de productos */
@@ -1260,7 +1306,7 @@ const addToCartFromCard = (event: Event, product: ProductType) => {
   font-weight: 700;
   margin: 0 0 0.4rem 0;
   color: var(--brand-primary);
-  font-family: 'Playfair Display', 'Georgia', 'Garamond', serif;
+  font-family: var(--ff-display);
   letter-spacing: 0.2px;
 }
 
@@ -3305,6 +3351,7 @@ const addToCartFromCard = (event: Event, product: ProductType) => {
    Nota: este bloque va al final para ganar prioridad sobre estilos legacy. */
 .product-store {
   color: rgba(7, 30, 37, 0.92);
+  padding: 64px 24px;
 }
 
 .product-store .store-nav,
@@ -3338,4 +3385,102 @@ const addToCartFromCard = (event: Event, product: ProductType) => {
   color: rgba(7, 30, 37, 0.96);
   font-weight: 800;
 }
+
+/* Carrusel móvil por categoría */
+.section-wrapper {
+  position: relative;
+  display: contents;
+}
+
+.section-header-mobile {
+  display: none;
+}
+
+.carousel-arrow {
+  display: none;
+  position: absolute;
+  top: 65%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--secondary);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.carousel-arrow:hover {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.carousel-arrow--left {
+  left: 4px;
+}
+
+.carousel-arrow--right {
+  right: 4px;
+}
+
+@media (max-width: 768px) {
+  .products-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .section-wrapper {
+    display: block;
+    width: 100%;
+  }
+
+  .section-header-mobile {
+    display: block;
+    margin-bottom: 10px;
+    padding-left: 4px;
+  }
+
+  .section-title-mobile {
+    font-family: var(--ff-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary-dark);
+  }
+
+  .grid-section {
+    display: flex;
+    gap: 0;
+    overflow-x: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 0;
+    margin: 0;
+    scrollbar-width: none;
+  }
+
+  .grid-section::-webkit-scrollbar {
+    display: none;
+  }
+
+  .grid-section .ice-card {
+    flex: 0 0 100%;
+    width: 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+  }
+
+  .carousel-arrow {
+    display: flex;
+  }
+}
+
 </style>

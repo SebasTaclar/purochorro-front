@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+/* Google Fonts loaded in index.html */
 @import './styles/global.css';
 @import './styles/modern-ecommerce.css';
 
@@ -39,7 +38,9 @@
   --secondary-gradient-hover: linear-gradient(135deg, var(--primary-red) 0%, var(--secondary-red) 100%);
 
   /* Typography */
-  --font-family: 'Playfair Display', 'Georgia', 'Garamond', serif;
+  --font-family: var(--ff-body);
+  --font-primary: var(--ff-body);
+  --font-heading: var(--ff-display);
 }
 
 /* Dark Theme Variables (Default) */
@@ -138,7 +139,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: var(--font-family);
 }
 
 html,

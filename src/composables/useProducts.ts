@@ -71,7 +71,7 @@ export function useProducts() {
   // Computed para productos disponibles (para ProductStore) - EXCLUYE productos showcase/novedades
   const availableProducts = computed(() =>
     backendProducts.value.filter(p =>
-      (p.status === 'available' || p.status === 'coming-soon') &&
+      p.status === 'available' &&
       !p.isShowcase  // Excluir productos que son novedades
     )
   )

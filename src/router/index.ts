@@ -80,11 +80,11 @@ const router = createRouter({
       props: { slug: 'esmeraldas', title: 'Esmeraldas' },
     },
 
-    {
-      path: '/ofertas',
-      name: 'ofertas',
-      component: () => import('../views/AirPodsPage.vue'),
-    },
+    // {
+    //   path: '/ofertas',
+    //   name: 'ofertas',
+    //   component: () => import('../views/AirPodsPage.vue'),
+    // },
 
     {
       path: '/perfumes',

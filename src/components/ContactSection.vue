@@ -1,86 +1,98 @@
 <template>
-  <section class="visit-section contact-section">
-    <div class="container">
-      <!-- Encabezado -->
-      <div class="section-header">
-        <h2 class="section-title">✦ {{ $t('visit.title') }} ✦</h2>
-        <p class="section-description">{{ $t('visit.subtitle') }}</p>
+  <!-- ══════════════════════════════════════════
+   CONTACTO
+══════════════════════════════════════════ -->
+<section class="section section-alt" id="contacto">
+  <div class="section-inner">
+    <div class="contact-grid">
+      <div class="reveal reveal-left">
+        <div class="eyebrow"><div class="eyebrow-line"></div> Contacto Comercial</div>
+        <h2 class="section-title">Hablemos de<br><span>tu proyecto</span></h2>
+        <p class="section-desc" style="margin-bottom:36px">
+          Cuéntanos tu idea y nuestro equipo comercial te acompañará en todo el proceso, desde el desarrollo del sabor hasta la entrega final.
+        </p>
+
+        <div class="contact-detail">
+          <div class="cd-icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg></div>
+          <div>
+            <div class="cd-label">Correo Comercial</div>
+            <div class="cd-val"><a href="mailto:servicioalcliente@odagelato.com.co">servicioalcliente@odagelato.com.co</a></div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="cd-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.69 13.6a19.79 19.79 0 01-3.07-8.67A2 2 0 013.56 3h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 10.17a16 16 0 005.74 5.74l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div>
+            <div class="cd-label">WhatsApp</div>
+            <div class="cd-val"><a href="https://wa.me/573202002489">+57 320 200 2489</a></div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="cd-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div>
+            <div class="cd-label">Ubicación</div>
+            <div class="cd-val"><a href="https://maps.google.com/?q=Zona+Franca+Intexzona,+Km.+1+via+Siberia+-+Funza,+Bodega+10,+Cota,+Cundinamarca,+Colombia" target="_blank" rel="noopener">Zona Franca Intexzona, Km. 1 via Siberia — Funza, Bodega 10, Cota, Cundinamarca, Colombia</a></div>
+          </div>
+        </div>
+
+        <!-- Google Maps -->
+        <div class="contact-map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.1221385190693!2d-74.16313611139063!3d4.7488138010352134!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f837abd23220f%3A0x9af3b3fa2991c9c4!2sOda%20Gelato!5e0!3m2!1ses!2sus!4v1780621351453!5m2!1ses!2sus"
+            width="100%"
+            height="180"
+            style="border:0;"
+            :allowfullscreen="true"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Ubicación ODA Gelato"
+          ></iframe>
+        </div>
       </div>
 
-      <!-- Contenido: Mapa + Info -->
-      <div class="content-grid">
-        <!-- Mapa + Dirección -->
-        <div class="left-column">
-          <div ref="mapHostEl" class="map-wrapper">
-            <iframe
-              v-if="shouldLoadMap"
-              title="Mapa: Joyería Angelie"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.9729106924015!2d-74.07661092622172!3d4.598875342534367!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9957a2e86765%3A0x92bd4b62b7506c09!2sJOYERIA%20ANGELIE!5e0!3m2!1ses!2sus!4v1765479420647!5m2!1ses!2sus"
-              allowfullscreen
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              class="map-iframe"
-            ></iframe>
-            <div v-else class="map-placeholder" aria-hidden="true"></div>
+      <div class="contact-form reveal reveal-right">
+        <div class="form-title">Solicitar Cotización</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nombre *</label>
+            <input class="form-input" type="text" placeholder="Tu nombre completo" required>
           </div>
-
-          <div class="info-item">
-            <div class="info-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-            </div>
-            <div class="info-content">
-              <h3 class="info-label">{{ $t('visit.addressLabel') }}</h3>
-              <p class="info-value">Edificio Víctor Melo · Cl. 12 #6-10 Local 07 · La Candelaria, Bogotá</p>
-            </div>
+          <div class="form-group">
+            <label class="form-label">Empresa *</label>
+            <input class="form-input" type="text" placeholder="Nombre de tu empresa">
           </div>
         </div>
-
-        <!-- Información -->
-        <div class="info-wrapper">
-          <div class="info-item">
-            <div class="info-icon phone-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-              </svg>
-            </div>
-            <div class="info-content">
-              <h3 class="info-label">{{ $t('visit.phoneLabel') }}</h3>
-              <p class="info-value phone-number"><a href="tel:3213727442">321 3727442</a></p>
-            </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Correo *</label>
+            <input class="form-input" type="email" placeholder="correo@empresa.com" required>
           </div>
-
-          <div class="info-item">
-            <div class="info-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <path d="m22 6-10 7L2 6"/>
-              </svg>
-            </div>
-            <div class="info-content">
-              <h3 class="info-label">{{ $t('visit.emailLabel') }}</h3>
-              <p class="info-value"><a href="mailto:info@joyeriaange.com">info@joyeriaange.com</a></p>
-            </div>
-          </div>
-
-          <div class="info-item">
-            <div class="info-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
-              </svg>
-            </div>
-            <div class="info-content">
-              <h3 class="info-label">{{ $t('visit.hoursLabel') }}</h3>
-              <p class="info-value">Lunes a Viernes<br>9:00 AM - 6:00 PM<br>Sábados: 9:00 AM - 2:00 PM</p>
-            </div>
+          <div class="form-group">
+            <label class="form-label">Teléfono</label>
+            <input class="form-input" type="tel" placeholder="+57 300 000 0000">
           </div>
         </div>
+        <div class="form-group full">
+          <label class="form-label">¿Qué necesitas?</label>
+          <select class="form-select">
+            <option value="">Selecciona una opción</option>
+            <option>Desarrollar mi marca de helado</option>
+            <option>Maquila de producción</option>
+            <option>Exportación / Distribución</option>
+            <option>Desarrollo de nuevos sabores</option>
+            <option>Información general</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Mensaje</label>
+          <textarea class="form-textarea" placeholder="Cuéntanos sobre tu proyecto, volumen estimado, mercado objetivo..."></textarea>
+        </div>
+        <button class="btn-submit" onclick="handleContactSubmit(event)">
+          Enviar Solicitud →
+        </button>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 </template>
 
 <script setup lang="ts">
@@ -134,279 +146,136 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&display=swap');
 
-/* === SECCIÓN COMPACTA === */
-.visit-section {
-  padding: 1.5rem 0;
-  background: linear-gradient(180deg, #071e25 0%, #0a1f26 100%);
-  border-top: 1px solid rgba(201, 168, 89, 0.15);
-  position: relative;
+/* ═══════════════════════════════════════════════
+   SECTION 10 — CONTACTO
+═══════════════════════════════════════════════ */
+.section{padding:100px 48px;position:relative}
+.section-inner{max-width:1280px;margin:0 auto}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--ff-display);
+  font-size:.62rem;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:var(--primary-dark);margin-bottom:14px;
+}
+.eyebrow-dark{color:var(--primary)}
+.eyebrow-line{width:28px;height:2px;background:currentColor;border-radius:2px}
+
+.section-title{
+  font-family:var(--ff-display);
+  font-size:clamp(1.8rem,4vw,3rem);
+  font-weight:700;letter-spacing:-.04em;
+  color:var(--secondary);line-height:1.05;
+  margin-bottom:16px;
+}
+.section-title-white{color:var(--white)}
+.section-title span{color:var(--primary)}
+.section-desc{
+  font-size:1rem;font-weight:300;
+  color:var(--gray);line-height:1.8;
+  max-width:520px;
+}
+.section-desc-white{color:rgba(255,255,255,.6)}
+
+.contact-grid{
+  display:grid;grid-template-columns:1fr 1.2fr;
+  gap:72px;align-items:start;
+}
+@media (max-width:768px){
+  .contact-grid{grid-template-columns:1fr;gap:32px}
+  .contact-form{padding:24px}
+  .form-row{grid-template-columns:1fr}
+  .form-input,.form-select,.form-textarea{width:100%;box-sizing:border-box}
 }
 
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
+
+
+.contact-info{}
+.contact-info .section-desc{margin-bottom:32px}
+.contact-detail{
+  display:flex;gap:14px;align-items:flex-start;
+  margin-bottom:20px;
+}
+.cd-icon{
+  width:40px;height:40px;flex-shrink:0;
+  background:var(--primary-wash);border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(118,180,242,.2);
+}
+.cd-icon svg{width:18px;height:18px;stroke:var(--primary-dark);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cd-label{font-size:.65rem;font-weight:600;color:var(--gray);letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.cd-val{font-size:.85rem;color:var(--secondary);font-weight:500}
+.cd-val a{text-decoration:none;color:inherit}
+.cd-val a:hover{color:var(--primary)}
+
+.contact-form{
+  background:var(--white);
+  border:1.5px solid rgba(118,180,242,.12);
+  border-radius:var(--r-xl);
+  padding:40px;
+  box-shadow:var(--shadow-md);
+}
+.form-title{
+  font-family:var(--ff-display);
+  font-size:1.1rem;font-weight:700;
+  color:var(--secondary);margin-bottom:24px;
+  letter-spacing:-.02em;
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:768px){.form-row{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.form-group.full{grid-column:1/-1}
+.form-label{
+  font-size:.7rem;font-weight:600;
+  color:var(--secondary);letter-spacing:.04em;text-transform:uppercase;
+}
+.form-input,.form-select,.form-textarea{
+  padding:12px 16px;
+  border:1.5px solid var(--gray-light);
+  border-radius:var(--r);
+  font-family:var(--ff-body);font-size:.88rem;
+  color:var(--secondary);background:var(--gray-bg);
+  transition:border-color .2s,background .2s,box-shadow .2s;
+  outline:none;
 }
 
-/* === ENCABEZADO === */
-.section-header {
-  text-align: center;
-  margin-bottom: 0.9rem;
+.contact-form{
+  padding:20px;
 }
 
-.section-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.9rem;
-  font-weight: 800;
-  color: rgb(201, 168, 89);
-  margin: 0 0 0.5rem 0;
-  letter-spacing: 1.5px;
+.form-input::placeholder,.form-select::placeholder,.form-textarea::placeholder{color:var(--gray)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:var(--primary);
+  background:var(--white);
+  box-shadow:0 0 0 4px rgba(118,180,242,.12);
 }
-
-.section-description {
-  font-size: 0.9rem;
-  color: rgba(246, 245, 241, 0.75);
-  margin: 0 auto;
-  max-width: 52ch;
-  line-height: 1.6;
+.form-textarea{resize:vertical;min-height:100px}
+.btn-submit{
+  width:100%;padding:14px;
+  background:var(--accent);color:var(--white);
+  border:none;border-radius:100px;
+  font-family:var(--ff-display);
+  font-size:.72rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;
+  transition:transform .3s var(--ease-out),box-shadow .3s;
+  box-shadow:0 8px 24px rgba(208,79,109,.3);
 }
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(208,79,109,.45)}
 
-/* === GRID DE CONTENIDO === */
-.content-grid {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 1rem;
-  align-items: start;
+.contact-map{
+  margin-top:24px;
+  border-radius:var(--r-lg);
+  overflow:hidden;
+  border:1px solid var(--gray-light);
+  background:var(--gray-bg);
 }
-
-.left-column {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
+.contact-map iframe{
+  display:block;
+  width:100%;
+  height:180px;
+  filter: grayscale(20%) contrast(105%);
 }
-
-/* === MAPA === */
-.map-wrapper {
-  border-radius: 16px;
-  overflow: hidden;
-  border: 2px solid rgba(201, 168, 89, 0.3);
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
-}
-
-.map-iframe {
-  width: 100%;
-  height: 240px;
-  border: none;
-  display: block;
-}
-
-.map-placeholder {
-  width: 100%;
-  height: 240px;
-  background: rgba(255, 255, 255, 0.04);
-}
-
-/* === INFORMACIÓN === */
-.info-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-}
-
-.info-item {
-  display: flex;
-  gap: 0.85rem;
-  padding: 0.7rem;
-  background: linear-gradient(135deg, rgba(201, 168, 89, 0.08) 0%, rgba(201, 168, 89, 0.03) 100%);
-  border: 1px solid rgba(201, 168, 89, 0.25);
-  border-radius: 12px;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.info-item:hover {
-  border-color: rgba(201, 168, 89, 0.5);
-  background: linear-gradient(135deg, rgba(201, 168, 89, 0.12) 0%, rgba(201, 168, 89, 0.05) 100%);
-}
-
-.info-icon {
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
-  border-radius: 12px;
-  background: rgba(201, 168, 89, 0.15);
-  border: 1px solid rgba(201, 168, 89, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgb(201, 168, 89);
-}
-
-.info-icon svg {
-  width: 24px;
-  height: 24px;
-}
-
-.phone-icon {
-  background: rgba(37, 211, 102, 0.15);
-  border-color: rgba(37, 211, 102, 0.3);
-  color: #25D366;
-}
-
-.info-content {
-  flex: 1;
-}
-
-.info-label {
-  font-family: 'Playfair Display', serif;
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: rgb(201, 168, 89);
-  margin: 0 0 0.35rem 0;
-  letter-spacing: 0.5px;
-}
-
-.info-value {
-  font-size: 0.9rem;
-  color: rgba(246, 245, 241, 0.85);
-  margin: 0;
-  line-height: 1.45;
-}
-
-.info-value a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.info-value a:hover {
-  text-decoration: underline;
-  text-decoration-color: rgba(201, 168, 89, 0.7);
-  text-underline-offset: 3px;
-}
-
-.phone-number {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #25D366;
-  letter-spacing: 1px;
-}
-
-.phone-number a {
-  color: inherit;
-}
-
-/* === RESPONSIVE === */
-@media (max-width: 1024px) {
-  .content-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .map-iframe {
-    height: 240px;
-  }
-}
-
-@media (max-width: 768px) {
-  .visit-section {
-    padding: 1.25rem 0;
-  }
-
-  /* En móvil/tablet: centrar columnas y textos */
-  .left-column,
-  .info-wrapper {
-    align-items: center;
-  }
-
-  .info-item {
-    justify-content: center;
-  }
-
-  .info-content {
-    text-align: center;
-  }
-
-  .section-title {
-    font-size: 1.7rem;
-  }
-
-  .section-description {
-    font-size: 0.85rem;
-  }
-
-  .map-iframe {
-    height: 220px;
-  }
-
-  .info-item {
-    padding: 0.7rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 0 1rem;
-  }
-
-  .section-header {
-    margin-bottom: 1rem;
-  }
-
-  .section-title {
-    font-size: 1.4rem;
-    letter-spacing: 1px;
-  }
-
-  .section-description {
-    font-size: 0.82rem;
-  }
-
-  .map-iframe {
-    height: 200px;
-  }
-
-  /* Teléfono + correo en la misma línea; horarios debajo a ancho completo */
-  .info-wrapper {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.65rem;
-    align-items: stretch;
-  }
-
-  /* El card de horarios (último) ocupa toda la fila */
-  .info-wrapper .info-item:last-child {
-    grid-column: 1 / -1;
-  }
-
-  .info-item {
-    flex-direction: column;
-    gap: 0.6rem;
-    padding: 0.8rem;
-    align-items: center;
-    text-align: center;
-  }
-
-  .info-icon {
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
-  }
-
-  .info-label {
-    font-size: 0.95rem;
-  }
-
-  .info-value {
-    font-size: 0.85rem;
-  }
-
-  .phone-number {
-    font-size: 1rem;
-  }
-
-}
-
 
 </style>

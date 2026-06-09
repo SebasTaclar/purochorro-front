@@ -141,7 +141,6 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--app-bg-primary);
   color: var(--app-text-primary);
   line-height: 1.6;

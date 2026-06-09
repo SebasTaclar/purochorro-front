@@ -35,11 +35,6 @@
           <div class="qv-title">{{ product.name }}</div>
           <div class="qv-meta">{{ categoryLabel }}</div>
 
-          <div class="qv-price">
-            <span class="qv-price-current">${{ formatPrice(product.price) }} COP</span>
-            <span v-if="product.originalPrice" class="qv-price-original">${{ formatPrice(product.originalPrice) }} COP</span>
-          </div>
-
           <div v-if="product.description" class="qv-description">{{ product.description }}</div>
 
           <div v-if="product.colors?.length" class="qv-colors">
@@ -55,17 +50,6 @@
                 {{ c }}
               </button>
             </div>
-          </div>
-
-          <div class="qv-actions">
-            <button
-              type="button"
-              class="qv-add"
-              :disabled="isAddDisabled"
-              @click="addToCartFromModal"
-            >
-              {{ product.status === 'available' ? 'Agregar al carrito' : 'No disponible' }}
-            </button>
           </div>
 
           <div class="qv-status" v-if="product.status !== 'available'">
@@ -203,7 +187,7 @@ onBeforeUnmount(() => {
   position: fixed;
   inset: 0;
   z-index: 2200;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(26, 24, 48, 0.92);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,11 +199,11 @@ onBeforeUnmount(() => {
   width: min(1100px, calc(100% - 24px));
   max-height: 86vh;
   overflow: auto;
-  background: var(--app-bg-primary);
-  border: 1px solid var(--app-border-color);
-  border-radius: 14px;
+  background: var(--gray-bg);
+  border: 1px solid rgba(118, 180, 242, 0.12);
+  border-radius: var(--r-lg);
   position: relative;
-  box-shadow: var(--shadow-heavy);
+  box-shadow: var(--shadow-lg);
 }
 
 .qv-close {
@@ -228,14 +212,20 @@ onBeforeUnmount(() => {
   right: 10px;
   width: 40px;
   height: 40px;
-  border-radius: 10px;
-  border: 1px solid var(--app-border-color);
+  border-radius: var(--r);
+  border: 1px solid rgba(118, 180, 242, 0.12);
   background: rgba(255, 255, 255, 0.92);
-  color: var(--app-text-secondary);
+  color: var(--secondary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.qv-close:hover {
+  background: var(--accent);
+  color: var(--white);
 }
 
 .qv-body {
@@ -249,9 +239,9 @@ onBeforeUnmount(() => {
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border-radius: 12px;
-  background: var(--app-bg-secondary);
-  border: 1px solid var(--app-border-color);
+  border-radius: var(--r);
+  background: var(--gray-bg);
+  border: 1px solid rgba(118, 180, 242, 0.08);
 }
 
 .qv-hero img {
@@ -269,16 +259,17 @@ onBeforeUnmount(() => {
 }
 
 .qv-thumb {
-  border: 1px solid var(--app-border-color);
+  border: 1px solid rgba(118, 180, 242, 0.08);
   background: rgba(255, 255, 255, 0.92);
-  border-radius: 10px;
+  border-radius: var(--r);
   padding: 0;
   overflow: hidden;
   cursor: pointer;
+  transition: border-color 0.2s;
 }
 
 .qv-thumb.active {
-  border-color: rgba(201, 168, 89, 0.85);
+  border-color: var(--primary);
 }
 
 .qv-thumb img {
@@ -289,40 +280,25 @@ onBeforeUnmount(() => {
 }
 
 .qv-title {
+  font-family: var(--ff-display);
   font-size: 1.25rem;
-  color: var(--app-text-primary);
+  color: var(--secondary);
   line-height: 1.2;
 }
 
 .qv-meta {
   margin-top: 6px;
+  font-family: var(--ff-body);
   font-size: 0.85rem;
-  color: var(--app-text-muted);
+  color: var(--primary);
   letter-spacing: 0.06em;
-}
-
-.qv-price {
-  margin-top: 12px;
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-
-.qv-price-current {
-  font-size: 1.2rem;
-  color: var(--app-text-primary);
-}
-
-.qv-price-original {
-  font-size: 0.95rem;
-  color: var(--app-text-muted);
-  text-decoration: line-through;
 }
 
 .qv-description {
   margin-top: 12px;
-  color: var(--app-text-secondary);
+  color: var(--gray);
   line-height: 1.55;
+  font-family: var(--ff-body);
 }
 
 .qv-colors {
@@ -330,8 +306,10 @@ onBeforeUnmount(() => {
 }
 
 .qv-colors-title {
-  color: var(--app-text-secondary);
+  color: var(--secondary);
   font-size: 0.92rem;
+  font-family: var(--ff-body);
+  font-weight: 600;
 }
 
 .qv-colors-list {
@@ -342,48 +320,25 @@ onBeforeUnmount(() => {
 }
 
 .qv-color {
-  border: 1px solid var(--app-border-color);
+  border: 1px solid rgba(118, 180, 242, 0.12);
   background: rgba(255, 255, 255, 0.92);
-  color: var(--app-text-primary);
+  color: var(--secondary);
   padding: 8px 10px;
-  border-radius: 10px;
-  cursor: pointer;
+  border-radius: var(--r);
+  font-family: var(--ff-body);
+  font-size: 0.85rem;
 }
 
 .qv-color.active {
-  border-color: rgba(201, 168, 89, 0.85);
-  box-shadow: 0 0 0 3px rgba(201, 168, 89, 0.14);
-}
-
-.qv-actions {
-  margin-top: 16px;
-}
-
-.qv-add {
-  width: 100%;
-  height: 46px;
-  border-radius: 12px;
-  border: 0;
-  background: linear-gradient(135deg, rgb(201, 168, 89) 0%, rgb(180, 145, 65) 100%);
-  color: var(--black);
-  cursor: pointer;
-  box-shadow: var(--shadow-light);
-}
-
-.qv-add:hover {
-  background: linear-gradient(135deg, rgb(180, 145, 65) 0%, rgb(201, 168, 89) 100%);
-  box-shadow: var(--shadow-medium);
-}
-
-.qv-add:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(118, 180, 242, 0.14);
 }
 
 .qv-status {
   margin-top: 10px;
-  color: var(--app-text-muted);
+  color: var(--accent);
   font-size: 0.9rem;
+  font-family: var(--ff-body);
 }
 
 @media (max-width: 980px) {
